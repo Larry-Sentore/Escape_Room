@@ -11,6 +11,7 @@ public class ClockPuzzle : MonoBehaviour
 
     private bool isSolved = false;
 
+
     public void OpenClockPrompt()
     {
         if (isSolved) return;
