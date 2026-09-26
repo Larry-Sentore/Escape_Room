@@ -3,7 +3,6 @@ using UnityEngine;
 public class PlayerRaycastInteract : MonoBehaviour
 {
     public float maxDistance = 6f;
-
     private Camera cam;
 
     void Start()
@@ -20,42 +19,62 @@ public class PlayerRaycastInteract : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, maxDistance))
             {
-                // 1. Painting
                 SlidingPainting painting = hit.collider.GetComponentInParent<SlidingPainting>();
                 if (painting != null)
                 {
+                    if (PuzzleManager.Instance != null)
+                    {
+                        PuzzleManager.Instance.PlayClickSound();
+                    }
+
                     painting.InteractWithPainting();
                     return;
                 }
 
-                // 2. Books
                 BookInteractable book = hit.collider.GetComponentInParent<BookInteractable>();
                 if (book != null)
                 {
+                    if (PuzzleManager.Instance != null)
+                    {
+                        PuzzleManager.Instance.PlayClickSound();
+                    }
+
                     book.OnClicked();
                     return;
                 }
 
-                // 3. TV Remote
                 TVRemoteInteractable remote = hit.collider.GetComponentInParent<TVRemoteInteractable>();
                 if (remote != null)
                 {
+                    if (PuzzleManager.Instance != null)
+                    {
+                        PuzzleManager.Instance.PlayClickSound();
+                    }
+
                     remote.UseRemote();
                     return;
                 }
 
-                // 4. Clock
                 ClockPuzzle clock = hit.collider.GetComponentInParent<ClockPuzzle>();
                 if (clock != null)
                 {
+                    if (PuzzleManager.Instance != null)
+                    {
+                        PuzzleManager.Instance.PlayClickSound();
+                    }
+
                     clock.OpenClockPrompt();
                     return;
                 }
 
-                // 5. Door
                 DoorLock door = hit.collider.GetComponentInParent<DoorLock>();
                 if (door != null)
                 {
+                    if (PuzzleManager.Instance != null)
+                    {
+                        PuzzleManager.Instance.PlayClickSound();
+                    }
+
                     door.OpenDoorPrompt();
                     return;
                 }

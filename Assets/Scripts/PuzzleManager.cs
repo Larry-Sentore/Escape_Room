@@ -10,13 +10,23 @@ public class PuzzleManager : MonoBehaviour
     public TextMeshProUGUI timerText;
     public GameObject loseScreenPanel;
 
-    public float totalTimeInSeconds = 180f; // 3 minutes
+    public AudioSource audioSource;
+    public AudioClip clickSFX;
+    public AudioClip successSFX;
+    public AudioClip wrongSFX;
+
+    public float totalTimeInSeconds = 180f;
     private int completedTasks = 0;
     private bool isGameOver = false;
 
     void Awake()
     {
         Instance = this;
+
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
     }
 
     void Start()
@@ -40,6 +50,36 @@ public class PuzzleManager : MonoBehaviour
         }
     }
 
+    public void PlayClickSound()
+    {
+        if (audioSource != null && clickSFX != null)
+        {
+            audioSource.clip = clickSFX;
+            audioSource.time = 0.4f;
+            audioSource.Play();
+        }
+    }
+
+    public void PlaySuccessSound()
+    {
+        if (audioSource != null && successSFX != null)
+        {
+            audioSource.clip = successSFX;
+            audioSource.time = 0.7f;
+            audioSource.Play();
+        }
+    }
+
+    public void PlayWrongSound()
+    {
+        if (audioSource != null && wrongSFX != null)
+        {
+            audioSource.clip = wrongSFX;
+            audioSource.time = 0.45f;
+            audioSource.Play();
+        }
+    }
+
     void UpdateTimerDisplay()
     {
         if (timerText != null)
@@ -53,12 +93,14 @@ public class PuzzleManager : MonoBehaviour
     public void CompleteTask()
     {
         completedTasks++;
+        PlaySuccessSound();
         UpdateUI();
     }
 
     public void ApplyPenalty(float secondsToDeduct)
     {
         totalTimeInSeconds = Mathf.Max(0, totalTimeInSeconds - secondsToDeduct);
+        PlayWrongSound();
         UpdateTimerDisplay();
     }
 
@@ -73,6 +115,7 @@ public class PuzzleManager : MonoBehaviour
     void TriggerGameOver()
     {
         isGameOver = true;
+
         if (loseScreenPanel != null)
         {
             loseScreenPanel.SetActive(true);
