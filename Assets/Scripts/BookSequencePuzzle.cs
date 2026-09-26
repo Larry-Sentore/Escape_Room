@@ -32,11 +32,11 @@ public class BookSequencePuzzle : MonoBehaviour
             {
                 isSolved = true;
                 StartCoroutine(SlideBoxesForward());
-                
+
                 if (PuzzleManager.Instance != null)
                 {
                     PuzzleManager.Instance.CompleteTask();
-                }
+                    }
             }
         }
         else

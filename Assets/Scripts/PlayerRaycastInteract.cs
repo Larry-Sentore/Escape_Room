@@ -20,19 +20,43 @@ public class PlayerRaycastInteract : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit, maxDistance))
             {
-                // Check for Painting
-                SlidingPainting painting = hit.collider.GetComponent<SlidingPainting>();
+                // 1. Painting
+                SlidingPainting painting = hit.collider.GetComponentInParent<SlidingPainting>();
                 if (painting != null)
                 {
                     painting.InteractWithPainting();
                     return;
                 }
 
-                // Check for Books
-                BookInteractable book = hit.collider.GetComponent<BookInteractable>();
+                // 2. Books
+                BookInteractable book = hit.collider.GetComponentInParent<BookInteractable>();
                 if (book != null)
                 {
                     book.OnClicked();
+                    return;
+                }
+
+                // 3. TV Remote
+                TVRemoteInteractable remote = hit.collider.GetComponentInParent<TVRemoteInteractable>();
+                if (remote != null)
+                {
+                    remote.UseRemote();
+                    return;
+                }
+
+                // 4. Clock
+                ClockPuzzle clock = hit.collider.GetComponentInParent<ClockPuzzle>();
+                if (clock != null)
+                {
+                    clock.OpenClockPrompt();
+                    return;
+                }
+
+                // 5. Door
+                DoorLock door = hit.collider.GetComponentInParent<DoorLock>();
+                if (door != null)
+                {
+                    door.OpenDoorPrompt();
                     return;
                 }
             }
