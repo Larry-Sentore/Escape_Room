@@ -14,6 +14,67 @@ public class DoorLock : MonoBehaviour
     public float wrongPenalty = 20f;
 
     private bool isUnlocked = false;
+    private string currentEnteredCode = "";
+
+    private void Awake()
+    {
+        ConfigureInputField();
+    }
+
+    private void ConfigureInputField()
+    {
+        if (inputField == null)
+        {
+            return;
+        }
+
+        inputField.onValueChanged.RemoveAllListeners();
+        inputField.onEndEdit.RemoveAllListeners();
+        inputField.onSubmit.RemoveAllListeners();
+
+        inputField.onValueChanged.AddListener(value =>
+        {
+            currentEnteredCode = value ?? string.Empty;
+        });
+
+        inputField.onSubmit.AddListener(_ => SubmitCode());
+        inputField.onEndEdit.AddListener(_ => SubmitCode());
+    }
+
+    public void AddDigit(string digit)
+    {
+        if (string.IsNullOrEmpty(digit))
+        {
+            return;
+        }
+
+        if (inputField != null)
+        {
+            inputField.text += digit;
+        }
+
+        currentEnteredCode = (inputField != null) ? inputField.text : currentEnteredCode + digit;
+    }
+
+    public void ClearCode()
+    {
+        currentEnteredCode = "";
+        if (inputField != null)
+        {
+            inputField.text = "";
+        }
+    }
+
+    private void Update()
+    {
+        if (inputField != null && keypadPanel != null && keypadPanel.activeSelf)
+        {
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
+                SubmitCode();
+            }
+        }
+    }
 
     public void OpenDoorPrompt()
     {
@@ -24,7 +85,8 @@ public class DoorLock : MonoBehaviour
             keypadPanel.SetActive(true);
             if (inputField != null)
             {
-                inputField.text = "";
+                ConfigureInputField();
+                ClearCode();
                 inputField.ActivateInputField();
             }
         }
@@ -32,9 +94,26 @@ public class DoorLock : MonoBehaviour
 
     public void SubmitCode()
     {
-        if (isUnlocked || inputField == null) return;
+        if (isUnlocked) return;
 
-        if (inputField.text.Trim() == correctPasscode)
+        string enteredCode = (inputField != null) ? inputField.text : currentEnteredCode;
+        string expectedCode = correctPasscode;
+
+        if (enteredCode != null)
+        {
+            enteredCode = enteredCode.Trim();
+            enteredCode = enteredCode.Replace(" ", "");
+        }
+
+        if (expectedCode != null)
+        {
+            expectedCode = expectedCode.Trim();
+            expectedCode = expectedCode.Replace(" ", "");
+        }
+
+        Debug.Log("DoorLock submit: entered='" + enteredCode + "' expected='" + expectedCode + "'");
+
+        if (enteredCode == expectedCode)
         {
             isUnlocked = true;
             if (keypadPanel != null)
@@ -56,7 +135,7 @@ public class DoorLock : MonoBehaviour
         }
         else
         {
-            inputField.text = "";
+            ClearCode();
             if (PuzzleManager.Instance != null)
             {
                 PuzzleManager.Instance.ApplyPenalty(wrongPenalty);
