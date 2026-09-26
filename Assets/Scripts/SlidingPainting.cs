@@ -4,7 +4,7 @@ using UnityEngine;
 public class SlidingPainting : MonoBehaviour
 {
     public Vector3 slideOffset = new Vector3(0f, -1.2f, 0f);
-    public float slideDuration = 1.0f;
+    public float slideDuration = 0.5f;
 
     private bool hasTriggered = false;
     private Vector3 initialPosition;
